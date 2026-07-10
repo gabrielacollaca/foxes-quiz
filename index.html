@@ -40,15 +40,18 @@
     box-shadow: 0 20px 60px rgba(16,40,48,0.12);
   }
 
-  /* Start screen */
-  .start h1 {
-    margin: 0 0 6px;
-    font-size: 30px;
+  /* App header (logo + title, outside the card) */
+  .app-header { text-align: center; margin-bottom: 22px; }
+  .app-header h1 {
+    margin: 0;
+    font-size: 32px;
     background: linear-gradient(90deg, var(--accent), var(--accent2));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
+
+  /* Start screen */
   .start p { color: var(--muted); margin: 0 0 24px; line-height: 1.5; }
   .btn-primary {
     width: 100%;
@@ -198,14 +201,18 @@
 </head>
 <body>
   <div class="app">
+
+    <div class="app-header" id="appHeader">
+      <div class="logo-badge">
+        <img src="assets/fox-logo.png" alt="Foxes" width="200" height="200">
+      </div>
+      <h1>De Quem é Essa Curiosidade?</h1>
+    </div>
+
     <div class="card">
 
       <!-- START -->
       <section id="start" class="start">
-        <div class="logo-badge">
-          <img src="assets/fox-logo.png" alt="Foxes" width="200" height="200">
-        </div>
-        <h1>De Quem é Essa Curiosidade?</h1>
         <p>9 curiosidades reais, 9 Foxes. Adivinhe quem é o dono de cada uma e prove que conhece bem a alcateia. Cada acerto vale 10 pontos!</p>
         <input type="text" class="name-input" id="playerName" placeholder="Seu nome" maxlength="30">
         <button class="btn-primary" id="startBtn">Começar jogo</button>
@@ -324,6 +331,7 @@
     currentIndex = 0;
     score = 0;
     recap = [];
+    $("appHeader").classList.add("hidden");
     startScreen.classList.add("hidden");
     resultScreen.classList.add("hidden");
     quizScreen.classList.remove("hidden");
@@ -434,6 +442,7 @@
     resultScreen.classList.add("hidden");
     quizScreen.classList.add("hidden");
     startScreen.classList.remove("hidden");
+    $("appHeader").classList.remove("hidden");
     $("playerName").value = "";
     $("playerName").style.borderColor = "";
     renderLeaderboard($("startLeaderboard"));
