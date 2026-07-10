@@ -382,10 +382,10 @@
 
     const feedback = $("feedback");
     if (isCorrect) {
-      feedback.textContent = `Isso mesmo! Era o(a) ${item.name}. +${gained} pontos`;
+      feedback.textContent = `Acertou! +${gained} pontos`;
       feedback.className = "feedback good";
     } else {
-      feedback.textContent = `Não foi dessa vez! Era o(a) ${item.name}.`;
+      feedback.textContent = `Não foi dessa vez!`;
       feedback.className = "feedback bad";
     }
 
