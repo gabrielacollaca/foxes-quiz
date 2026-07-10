@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De Quem é Essa Curiosidade?</title>
+<style>
+  :root {
+    --bg1: #1e1b4b;
+    --bg2: #0f172a;
+    --accent: #f472b6;
+    --accent2: #fb923c;
+    --good: #22c55e;
+    --bad: #ef4444;
+    --card: rgba(255,255,255,0.06);
+    --card-border: rgba(255,255,255,0.12);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  body {
+    background: radial-gradient(1200px 600px at 20% -10%, #7c2d92 0%, transparent 60%),
+                radial-gradient(1000px 500px at 100% 110%, #ea580c 0%, transparent 55%),
+                linear-gradient(160deg, var(--bg1), var(--bg2));
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .app { width: 100%; max-width: 600px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+
+  /* Start screen */
+  .start h1 {
+    margin: 0 0 6px;
+    font-size: 30px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .start p { color: var(--muted); margin: 0 0 24px; line-height: 1.5; }
+  .btn-primary {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    color: #1e1b4b;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(244,114,182,0.25); }
+  .btn-primary:active { transform: translateY(0); }
+  .name-input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 14px;
+  }
+  .name-input::placeholder { color: var(--muted); }
+  .name-input:focus { outline: none; border-color: var(--accent); }
+  .clear-link {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 6px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .clear-link:hover { color: var(--text); }
+
+  /* Quiz screen */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pill { background: rgba(255,255,255,0.08); padding: 5px 12px; border-radius: 999px; font-weight: 600; }
+  .progress-track {
+    width: 100%; height: 6px; background: rgba(255,255,255,0.08);
+    border-radius: 999px; overflow: hidden; margin-bottom: 22px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 999px;
+    transition: width .3s ease;
+  }
+  .curiosity-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 8px;
+  }
+  .curiosity-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; font-weight: 700; }
+  .curiosity-text { font-size: 17px; line-height: 1.5; white-space: pre-wrap; }
+  .names-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .name-btn {
+    padding: 13px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .name-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(244,114,182,0.08); }
+  .name-btn.correct { border-color: var(--good); background: rgba(34,197,94,0.15); }
+  .name-btn.wrong { border-color: var(--bad); background: rgba(239,68,68,0.15); }
+  .name-btn:disabled { cursor: default; opacity: 0.85; }
+
+  .feedback { margin-top: 16px; font-size: 14px; font-weight: 600; min-height: 20px; }
+  .feedback.good { color: var(--good); }
+  .feedback.bad { color: var(--bad); }
+
+  .next-btn { display: none; }
+  .next-btn.show { display: block; }
+
+  /* Result screen */
+  .result h2 { margin: 0 0 4px; font-size: 26px; }
+  .result .score-big {
+    font-size: 52px; font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin: 10px 0 4px;
+  }
+  .result .sub { color: var(--muted); margin-bottom: 20px; }
+  .leaderboard-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 10px; font-weight: 700; }
+  .leaderboard-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: rgba(255,255,255,0.03);
+    font-size: 14px;
+  }
+  .leaderboard-item.you { border-color: var(--accent); background: rgba(244,114,182,0.1); }
+  .leaderboard-item .rank { font-weight: 700; color: var(--accent2); width: 20px; }
+  .leaderboard-item .lb-name { flex: 1; font-weight: 600; }
+  .leaderboard-item .lb-score { font-weight: 700; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 420px) {
+    .card { padding: 20px; border-radius: 16px; }
+    .start h1 { font-size: 24px; }
+    .names-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+
+      <!-- START -->
+      <section id="start" class="start">
+        <h1>De Quem é Essa Curiosidade?</h1>
+        <p>9 curiosidades reais, 9 Foxes. Adivinhe quem é o dono de cada uma e prove que conhece bem a alcateia. Cada acerto vale 10 pontos!</p>
+        <input type="text" class="name-input" id="playerName" placeholder="Seu nome" maxlength="30">
+        <button class="btn-primary" id="startBtn">Começar jogo</button>
+        <div id="startLeaderboard" style="margin-top: 20px;"></div>
+        <button class="clear-link hidden" id="clearRankingBtn">Limpar ranking</button>
+      </section>
+
+      <!-- QUIZ -->
+      <section id="quiz" class="hidden">
+        <div class="topbar">
+          <span id="questionCount" class="pill">Curiosidade 1/9</span>
+          <span id="scorePill" class="pill">Pontos: 0</span>
+        </div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
+
+        <div class="curiosity-box">
+          <div class="curiosity-label">Curiosidade</div>
+          <div class="curiosity-text" id="curiosityText"></div>
+        </div>
+
+        <div class="names-grid" id="namesGrid"></div>
+        <div class="feedback" id="feedback"></div>
+        <button class="btn-primary next-btn" id="nextBtn">Próxima curiosidade</button>
+      </section>
+
+      <!-- RESULT -->
+      <section id="result" class="result hidden">
+        <h2 id="resultTitle">Resultado</h2>
+        <div class="score-big"><span id="finalScore">0</span></div>
+        <div class="sub" id="resultSub">pontos</div>
+        <div class="leaderboard-title">Ranking</div>
+        <div class="leaderboard-list" id="resultLeaderboard"></div>
+        <button class="btn-primary" id="retryBtn">Jogar novamente</button>
+      </section>
+
+    </div>
+  </div>
+
+<script>
+(() => {
+  "use strict";
+
+  const DATA = [
+    { name: "Louise", curiosity: "Um dos meus artistas preferidos é Dilsinho" },
+    { name: "Letícia", curiosity: "Tenho muitas, mas a que geralmente deixa as pessoas surpresas é o fato de que sou Médica Veterinária rs" },
+    { name: "Aline", curiosity: "Eu já toquei em uma banda de metal melódico" },
+    { name: "Gabriel", curiosity: "Já ajudei minha família a vender cachorro quente e onde morava ficava os ladrões na porta, então, todo mundo que ia comprar cachorro quente lá, tinha que pedir licença para eles para conseguir fazer o pedido." },
+    { name: "Darla", curiosity: "Eu já entrei nos cursos de Arquitetura e Pedagogia, mas abandonei os dois." },
+    { name: "Ariane", curiosity: "Quando eu era criança, eu tinha uma galinha como bicho de estimação. Era apaixonada por ela, a Marilu. Um dia ela sumiu, e meus pais me disseram que ela tinha fugido, fiquei arrasada.\n\nAnos depois, quando eu já era adulta, em uma conversa séria, minha mãe me confessou que ela e meu pai deram a galinha para o vizinho, que a cozinhou.\n\nFoi um dos maiores plot twists que tive na vida adulta em relação aos meus pais." },
+    { name: "Karina", curiosity: "Eu tenho muito medo de gato, a ponto de chorar se um gato encostar em mim" },
+    { name: "Carol", curiosity: "Gosto de escutar ópera pra dormir" },
+    { name: "Gustavo", curiosity: "Quando era criança, fiz parte de um grupo de teatro e uma cia de dança, então sou muito ligado a artes" },
+  ];
+
+  const ALL_NAMES = DATA.map(d => d.name);
+  const LB_KEY = "curiosityGameLeaderboard";
+  const POINTS_PER_HIT = 10;
+
+  const $ = (id) => document.getElementById(id);
+  const startScreen = $("start");
+  const quizScreen = $("quiz");
+  const resultScreen = $("result");
+
+  let order = [];
+  let currentIndex = 0;
+  let score = 0;
+  let answered = false;
+  let recap = [];
+  let playerName = "";
+
+  function loadLeaderboard() {
+    try { return JSON.parse(localStorage.getItem(LB_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function saveLeaderboard(list) {
+    localStorage.setItem(LB_KEY, JSON.stringify(list.slice(0, 20)));
+  }
+
+  function renderLeaderboard(container, highlightEntry) {
+    const list = loadLeaderboard();
+    $("clearRankingBtn").classList.toggle("hidden", list.length === 0);
+    if (list.length === 0) {
+      container.innerHTML = "";
+      return;
+    }
+    container.innerHTML = `<div class="leaderboard-title">Ranking</div><div class="leaderboard-list"></div>`;
+    const listEl = container.querySelector(".leaderboard-list");
+    list.slice(0, 10).forEach((entry, i) => {
+      const div = document.createElement("div");
+      const isYou = highlightEntry && entry === highlightEntry;
+      div.className = `leaderboard-item${isYou ? " you" : ""}`;
+      div.innerHTML = `<span class="rank">${i + 1}º</span><span class="lb-name">${entry.name}</span><span class="lb-score">${entry.score} pts</span>`;
+      listEl.appendChild(div);
+    });
+  }
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function startGame() {
+    const nameInput = $("playerName");
+    playerName = nameInput.value.trim();
+    if (!playerName) {
+      nameInput.focus();
+      nameInput.style.borderColor = "var(--bad)";
+      return;
+    }
+    order = shuffle(DATA.map((_, i) => i));
+    currentIndex = 0;
+    score = 0;
+    recap = [];
+    startScreen.classList.add("hidden");
+    resultScreen.classList.add("hidden");
+    quizScreen.classList.remove("hidden");
+    showQuestion();
+  }
+
+  function showQuestion() {
+    answered = false;
+    const total = order.length;
+    const item = DATA[order[currentIndex]];
+
+    $("questionCount").textContent = `Curiosidade ${currentIndex + 1}/${total}`;
+    $("scorePill").textContent = `Pontos: ${score}`;
+    $("progressFill").style.width = `${(currentIndex / total) * 100}%`;
+    $("curiosityText").textContent = item.curiosity;
+    $("feedback").textContent = "";
+    $("feedback").className = "feedback";
+    $("nextBtn").classList.remove("show");
+
+    const grid = $("namesGrid");
+    grid.innerHTML = "";
+    ALL_NAMES.forEach((name) => {
+      const btn = document.createElement("button");
+      btn.className = "name-btn";
+      btn.textContent = name;
+      btn.addEventListener("click", () => selectAnswer(name));
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectAnswer(chosenName) {
+    if (answered) return;
+    answered = true;
+
+    const item = DATA[order[currentIndex]];
+    const isCorrect = chosenName === item.name;
+    const gained = isCorrect ? POINTS_PER_HIT : 0;
+    score += gained;
+
+    const buttons = $("namesGrid").querySelectorAll(".name-btn");
+    buttons.forEach((btn) => {
+      btn.disabled = true;
+      if (btn.textContent === item.name) btn.classList.add("correct");
+      else if (btn.textContent === chosenName) btn.classList.add("wrong");
+    });
+
+    const feedback = $("feedback");
+    if (isCorrect) {
+      feedback.textContent = `Isso mesmo! Era o(a) ${item.name}. +${gained} pontos`;
+      feedback.className = "feedback good";
+    } else {
+      feedback.textContent = `Não foi dessa vez! Era o(a) ${item.name}.`;
+      feedback.className = "feedback bad";
+    }
+
+    $("scorePill").textContent = `Pontos: ${score}`;
+    recap.push({ correct: isCorrect });
+    $("nextBtn").classList.add("show");
+  }
+
+  $("nextBtn").addEventListener("click", () => {
+    currentIndex += 1;
+    if (currentIndex >= order.length) {
+      showResult();
+    } else {
+      showQuestion();
+    }
+  });
+
+  function showResult() {
+    quizScreen.classList.add("hidden");
+    resultScreen.classList.remove("hidden");
+
+    const total = order.length;
+    const hits = recap.filter(r => r.correct).length;
+    const pct = Math.round((hits / total) * 100);
+    let title = "Boa rodada!";
+    if (pct === 100) title = "Vocês se conhecem muito bem! 🎉";
+    else if (pct >= 70) title = "Mandaram bem! 🔥";
+    else if (pct < 40) title = "Hora de conhecer melhor a galera!";
+
+    $("resultTitle").textContent = `${title} — ${playerName}`;
+    $("finalScore").textContent = score;
+    $("resultSub").textContent = `${hits}/${total} curiosidades certas · ${pct}% de acerto`;
+
+    const newEntry = { name: playerName, score, date: Date.now() };
+    const list = loadLeaderboard();
+    list.push(newEntry);
+    list.sort((a, b) => b.score - a.score);
+    saveLeaderboard(list);
+    renderResultLeaderboard(newEntry);
+  }
+
+  function renderResultLeaderboard(highlightEntry) {
+    const list = loadLeaderboard();
+    const listEl = $("resultLeaderboard");
+    listEl.innerHTML = "";
+    list.slice(0, 10).forEach((entry, i) => {
+      const div = document.createElement("div");
+      const isYou = entry === highlightEntry;
+      div.className = `leaderboard-item${isYou ? " you" : ""}`;
+      div.innerHTML = `<span class="rank">${i + 1}º</span><span class="lb-name">${entry.name}</span><span class="lb-score">${entry.score} pts</span>`;
+      listEl.appendChild(div);
+    });
+  }
+
+  function backToStart() {
+    resultScreen.classList.add("hidden");
+    quizScreen.classList.add("hidden");
+    startScreen.classList.remove("hidden");
+    $("playerName").value = "";
+    $("playerName").style.borderColor = "";
+    renderLeaderboard($("startLeaderboard"));
+  }
+
+  $("startBtn").addEventListener("click", startGame);
+  $("retryBtn").addEventListener("click", backToStart);
+  $("playerName").addEventListener("input", () => { $("playerName").style.borderColor = ""; });
+  $("clearRankingBtn").addEventListener("click", () => {
+    saveLeaderboard([]);
+    renderLeaderboard($("startLeaderboard"));
+  });
+
+  renderLeaderboard($("startLeaderboard"));
+})();
+</script>
+</body>
+</html>
