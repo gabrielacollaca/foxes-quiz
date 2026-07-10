@@ -174,7 +174,18 @@
   .leaderboard-item .lb-name { flex: 1; font-weight: 600; }
   .leaderboard-item .lb-score { font-weight: 700; }
 
-  .logo-badge { width: 84px; height: 84px; margin: 0 auto 18px; display: block; }
+  .logo-badge {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #28C4CB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .logo-badge img { width: 100%; height: 100%; object-fit: cover; }
 
   .hidden { display: none !important; }
 
@@ -191,25 +202,9 @@
 
       <!-- START -->
       <section id="start" class="start">
-        <svg class="logo-badge" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="100" cy="100" r="98" fill="#28C4CB"/>
-          <g stroke="#14202b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
-            <polygon points="34,22 90,110 20,82" fill="#E2672E"/>
-            <polygon points="166,22 110,110 180,82" fill="#E2672E"/>
-            <polygon points="43,44 81,103 33,78" fill="#F5DDBB" stroke-width="2"/>
-            <polygon points="157,44 119,103 167,78" fill="#F5DDBB" stroke-width="2"/>
-            <path d="M100,48 C146,48 172,86 168,128 C165,162 138,186 100,186 C62,186 35,162 32,128 C28,86 54,48 100,48 Z" fill="#E2672E"/>
-            <polygon points="72,60 84,28 96,60 100,45 104,60 116,28 128,60" fill="#E2672E"/>
-            <path d="M100,104 C120,109 131,127 126,151 C122,168 112,179 100,181 C88,179 78,168 74,151 C69,127 80,109 100,104 Z" fill="#F5DDBB" stroke-width="2"/>
-            <rect x="60" y="98" width="34" height="24" rx="10" fill="#14202b" stroke-width="2"/>
-            <rect x="106" y="98" width="34" height="24" rx="10" fill="#14202b" stroke-width="2"/>
-            <line x1="94" y1="106" x2="106" y2="106" stroke="#14202b" stroke-width="5"/>
-            <path d="M83,150 Q100,168 117,150" fill="none" stroke="#14202b" stroke-width="4.5"/>
-            <path d="M92,157 Q100,175 108,157 Q100,166 92,157 Z" fill="#E2432E" stroke-width="2"/>
-          </g>
-          <path d="M67,105 L88,116" stroke="#3a4a5a" stroke-width="3" stroke-linecap="round"/>
-          <path d="M113,105 L134,116" stroke="#3a4a5a" stroke-width="3" stroke-linecap="round"/>
-        </svg>
+        <div class="logo-badge">
+          <img src="assets/fox-logo.png" alt="Foxes" width="200" height="200">
+        </div>
         <h1>De Quem é Essa Curiosidade?</h1>
         <p>9 curiosidades reais, 9 Foxes. Adivinhe quem é o dono de cada uma e prove que conhece bem a alcateia. Cada acerto vale 10 pontos!</p>
         <input type="text" class="name-input" id="playerName" placeholder="Seu nome" maxlength="30">
